@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Directorios y archivos del proyecto
+CUEs/
+*.flac
+*.ape
+*.mp3
+
 # C extensions
 *.so
 
