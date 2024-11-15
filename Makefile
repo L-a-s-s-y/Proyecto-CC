@@ -1,5 +1,6 @@
 # define the name of the virtual environment directory
 VENV := venv
+
 # default target, when make executed without arguments
 all: venv
 
@@ -12,6 +13,8 @@ venv: $(VENV)/bin/activate
 
 run: venv
 	./$(VENV)/bin/python main.py
+
+test: pytest
 
 clean:
 	rm -rf $(VENV)
