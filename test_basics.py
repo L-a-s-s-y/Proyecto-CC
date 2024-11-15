@@ -2,4 +2,4 @@ import pytest
 from main import funcTestFunc
 
 def test_sample():
-    assert funcTestFunc("CUEs/Schumann - Test - FLAC.cue") == dict
+    assert funcTestFunc("tests/Three Samples_ASCII.cue") == dict
