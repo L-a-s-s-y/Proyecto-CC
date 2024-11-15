@@ -10,7 +10,10 @@ jobs:
     build:
         runs-on: ubuntu-latest
 
-        steps: 
+        steps:
+            - name: Install ffmpeg
+              run: sudo apt install -y ffmpeg
+
             - name: Checkout code
               uses: actions/checkout@v2
             
