@@ -26,6 +26,10 @@ jobs:
               run: |
                 python -m pip install --upgrade pip
                 pip install -r requirements.txt
+            
+            - name: Start API
+              run: |
+                flask --app api run --host='0.0.0.0'
 
             - name: Run tests
               run: |
