@@ -27,10 +27,9 @@ jobs:
                 python -m pip install --upgrade pip
                 pip install -r requirements.txt
             
-            - name: Start API
+            - name: Start API and run tests
               run: |
-                flask --app api run --host='0.0.0.0'
-
-            - name: Run tests
-              run: |
+                flask --app api run --host='0.0.0.0' &
+                sleep 2
                 pytest test_basics.py
+                kill -9 `lsof -i:5000 -t`
