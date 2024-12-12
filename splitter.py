@@ -35,9 +35,12 @@ def album_info(aCueSheet):
 #TODO: Se puede intentar que se puedan seleccionar más parámetros
 def split_it_like_solomon(cue):
     split = FileSystemOperations(
-        filename=cue, 
+        filename=cue,
         outputdir=cue.split('.')[0],
-        ffmpeg_loglevel='verbose',
+        #outputformat="copy",
+        progress_meter='tqdm',
+        prg_loglevel='info',
+        ffmpeg_loglevel='error',
         overwrite='always'
     )
     if split.kwargs["dry"]:

@@ -1,6 +1,8 @@
+import logging.handlers
 import os
 from flask import Flask, flash, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
+import logging
 import splitter
 
 UPLOAD_FOLDER = '/tmp'
@@ -9,6 +11,18 @@ ALLOWED_CUE = {'cue'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+el_logger = logging.getLogger()
+
+#el_logger_formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s", datefmt="%d-%m-%Y | %H:%:%S")
+
+consoleHandler = logging.StreamHandler()
+#consoleHandler.setFormatter(el_logger_formatter)
+el_logger.addHandler(consoleHandler)
+
+fileHandler = logging.handlers.RotatingFileHandler("logs.log", backupCount=100, maxBytes=1048576, encoding='utf-8')
+#fileHandler.setFormatter(el_logger_formatter)
+el_logger.addHandler(fileHandler)
 
 def allowed_audio(filename):
     return '.' in filename and \
