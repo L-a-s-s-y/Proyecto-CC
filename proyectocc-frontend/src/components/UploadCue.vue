@@ -31,9 +31,9 @@
         formData.append('file', this.file);
   
         try {
-          const res = await axios.post('http://localhost:5000/cue', formData, {
+          //const res = await axios.post('http://localhost:5000/cue', formData, {
           //const res = await axios.post('http://172.18.0.2:5000/cue', formData, {
-          //const res = await axios.post(`${process.env.VUE_APP_API_MACHINE}/cue`, formData, {
+          const res = await axios.post(`${process.env.VUE_APP_API_MACHINE}/cue`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
           });
           this.response = res.data;

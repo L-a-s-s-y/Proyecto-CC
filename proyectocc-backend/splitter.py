@@ -22,8 +22,8 @@ def album_info(aCueSheet):
         dbname="music_chops",
         user="postgres",
         password="1234",
-        host="localhost"
-        #host="my-postgres-database"
+        #host="localhost"
+        host="my-postgres-database"
     )
     el_cursor = conexion.cursor()
     crear_tabla(conexion, el_cursor)

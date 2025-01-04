@@ -36,9 +36,9 @@
         formData.append('file', this.file);
   
         try {
-            //const res = await axios.post(`${process.env.VUE_APP_API_MACHINE}/audio`, formData, {
+            const res = await axios.post(`${process.env.VUE_APP_API_MACHINE}/audio`, formData, {
             //const res = await axios.post(`http://172.18.0.2:5000/audio`, formData, {
-            const res = await axios.post(`http://localhost:5000/audio`, formData, {
+            //const res = await axios.post(`http://localhost:5000/audio`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
           this.response = res.data;

@@ -13,6 +13,8 @@ ffcuesplitter_rest_api.egg-info
 
 # C extensions
 *.so
+OLD*
+Contenedores*
 
 # Distribution / packaging
 .Python

@@ -2,7 +2,7 @@ FROM alpine:3.20
 RUN apk add --no-cache python3 py3-pip
 RUN apk add ffmpeg
 WORKDIR /home/api
-COPY ./apy.py .
+COPY ./api.py .
 COPY ./requirements.txt .
 COPY ./setup.py .
 COPY ./splitter.py .

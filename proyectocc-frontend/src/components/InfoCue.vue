@@ -38,8 +38,8 @@
     methods: {
       async fetchInfo() {
         try {
-          const res = await axios.get(`http://localhost:5000/info/${this.cueName}`);
-          //const res = await axios.get(`${process.env.VUE_APP_API_MACHINE}/info/${this.cueName}`);
+          //const res = await axios.get(`http://localhost:5000/info/${this.cueName}`);
+          const res = await axios.get(`${process.env.VUE_APP_API_MACHINE}/info/${this.cueName}`);
           //const res = await axios.get(`http://172.18.0.2:5000/info/${this.cueName}`);
           this.response = res.data;
         } catch (err) {
@@ -50,9 +50,9 @@
       async getFiles() {
         try {
             // Realizar la solicitud a la API
-            const response = await axios.get(`http://localhost:5000/download/${this.cueName}`, {
+            //const response = await axios.get(`http://localhost:5000/download/${this.cueName}`, {
             //const response = await axios.get(`http://172.18.0.2:5000/download/${this.cueName}`, {
-            //const response = await axios.get(`${process.env.VUE_APP_API_MACHINE}/download/${this.cueName}`, {
+            const response = await axios.get(`${process.env.VUE_APP_API_MACHINE}/download/${this.cueName}`, {
             responseType: "blob", // Asegura que el archivo se reciba como blob
             });
 

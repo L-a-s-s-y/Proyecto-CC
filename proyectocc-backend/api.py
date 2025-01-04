@@ -52,33 +52,8 @@ def mod_cue_target_file(cue_sheet):
         print("CUE ajustado")      
         print("--------------------------------------")
 
-@app.route('/', methods=['GET'])
-def wellcome():
-    return redirect(url_for('wellcome_cue'))
 
-@app.route('/cue', methods=['GET'])
-def wellcome_cue():
-    return '''
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file>
-      <input type=submit value=Upload>
-    </form>
-    '''
 
-@app.route('/audio', methods=['GET'])
-def wellcome_audio():
-    return '''
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file>
-      <input type=submit value=Upload>
-    </form>
-    '''
 
 #@app.route('/', methods=['GET', 'POST'])
 #TODO: para el hash seguramente haya que hacerlo del archivo completo :(
@@ -166,3 +141,30 @@ def info_cue(name):
         error = {}
         error['error'] = "FFCueSplitterError: el archivo de audio no existe o no se puede abrir."
         return error
+    
+#@app.route('/cue', methods=['GET'])
+#def wellcome_cue():
+#    return '''
+#    <!doctype html>
+#    <title>Upload new File</title>
+#    <h1>Upload new File</h1>
+#    <form method=post enctype=multipart/form-data>
+#      <input type=file name=file>
+#      <input type=submit value=Upload>
+#    </form>
+#    '''
+#
+#@app.route('/audio', methods=['GET'])
+#def wellcome_audio():
+#    return '''
+#    <!doctype html>
+#    <title>Upload new File</title>
+#    <h1>Upload new File</h1>
+#    <form method=post enctype=multipart/form-data>
+#      <input type=file name=file>
+#      <input type=submit value=Upload>
+#    </form>
+#    '''
+#@app.route('/', methods=['GET'])
+#def wellcome():
+#    return redirect(url_for('wellcome_cue'))
