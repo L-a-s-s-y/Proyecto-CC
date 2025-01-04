@@ -1,7 +1,10 @@
 import logging.handlers
 import os
-from flask import Flask, flash, request, redirect, url_for, send_from_directory
+from flask import Flask, request, redirect, url_for, send_from_directory
+from flask_cors import CORS
 from werkzeug.utils import secure_filename
+from ffcuesplitter.cuesplitter import InvalidFileError
+from ffcuesplitter.cuesplitter import FFCueSplitterError
 import logging
 import splitter
 
@@ -10,6 +13,7 @@ ALLOWED_EXTENSIONS = {'flac', 'ape', 'mp3', 'wav'}
 ALLOWED_CUE = {'cue'}
 
 app = Flask(__name__)
+CORS(app)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 el_logger = logging.getLogger()
@@ -83,47 +87,82 @@ def upload_cue():
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
-            flash('No file part')
+            #flash('No file part')
             return redirect(request.url)
         file = request.files['file']
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
         if file.filename == '':
-            flash('No selected file')
+            #flash('No selected file')
             return redirect(request.url)
         if file and allowed_cue(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             mod_cue_target_file(filename)
-            return redirect(url_for('wellcome_audio', name=filename))
+            response = {}
+            response['filename'] = filename
+            return response
+            #return redirect(url_for('wellcome_audio', name=filename))
+        else:
+            error = {}
+            error['error'] = "not a .cue file"
+            return error
 
 @app.route('/audio', methods=['POST'])
 def upload_audio():
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
-            flash('No file part')
+            #flash('No file part')
             return redirect(request.url)
         file = request.files['file']
-        cue = request.args['name']
+        #cue = request.args['name'] #para tomar el nombre del cue origen
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
         if file.filename == '':
-            flash('No selected file')
+            #flash('No selected file')
             return redirect(request.url)
         if file and allowed_audio(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('info_cue', name=cue))
+            response = {}
+            response['filename'] = filename
+            return response
+            #return redirect(url_for('info_cue', name=cue))
+        else:
+            error = {}
+            error['error'] = "not a valid audio file"
+            return error
 
 @app.route('/download/<name>', methods=['GET'])
 def download_file(name):
-    comprimido = splitter.split_it_like_solomon(os.path.join(app.config['UPLOAD_FOLDER'], name))
-    return send_from_directory(app.config['UPLOAD_FOLDER'], comprimido.split('/')[2])
+    try:
+        comprimido = splitter.split_it_like_solomon(os.path.join(app.config['UPLOAD_FOLDER'], name))
+        respuesta = send_from_directory(app.config['UPLOAD_FOLDER'], comprimido.split('/')[2])
+        #respuesta.headers['Access-Control-Allow-Origin'] = '*'
+        respuesta.headers['Access-Control-Expose-Headers'] = 'Content-Disposition'
+        return respuesta
+        #return send_from_directory(app.config['UPLOAD_FOLDER'], comprimido.split('/')[2], as_attachment=True)
+    except InvalidFileError:
+        error = {}
+        error['error'] = "InvalidFileError: "+name+" no existe en el directorio."
+        return error
+    except FFCueSplitterError:
+        error = {}
+        error['error'] = "FFCueSplitterError: el archivo de audio no existe o no se puede abrir."
+        return error
 
-#TODO: seleccionar el archivo cue.
 @app.route('/info/<name>', methods=['GET'])
 def info_cue(name):
-    respuesta = splitter.album_info(os.path.join(app.config['UPLOAD_FOLDER'], name))
-    respuesta['cue_file'] = name
-    return respuesta
+    try:
+        respuesta = splitter.album_info(os.path.join(app.config['UPLOAD_FOLDER'], name))
+        respuesta['cue_file'] = name
+        return respuesta
+    except InvalidFileError:
+        error = {}
+        error['error'] = "InvalidFileError: "+name+" no existe en el directorio."
+        return error
+    except FFCueSplitterError:
+        error = {}
+        error['error'] = "FFCueSplitterError: el archivo de audio no existe o no se puede abrir."
+        return error

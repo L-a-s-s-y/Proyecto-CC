@@ -1,5 +1,0 @@
-ffcuesplitter
-pytest
-Flask
-Werkzeug
-requests
