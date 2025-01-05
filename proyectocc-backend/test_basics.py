@@ -10,10 +10,10 @@ INFO_URL="http://localhost:5000/info/Three_Samples_ASCII.cue"
 DOWNLOAD_URL="http://localhost:5000/download/Three_Samples_ASCII.cue"
 
 def test_info_return_type():
-    assert type(album_info("tests/Three Samples_ASCII.cue")) == dict
+    assert type(album_info("proyectocc-backend/tests/Three Samples_ASCII.cue")) == dict
 
 def test_info_return_not_empty():
-    assert bool(album_info("tests/Three Samples_ASCII.cue"))
+    assert bool(album_info("proyectocc-backend/tests/Three Samples_ASCII.cue"))
 
 #def test_cue_get():
 #    peticion = requests.get(CUE_URL)
