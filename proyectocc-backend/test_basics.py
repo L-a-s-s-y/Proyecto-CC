@@ -24,12 +24,12 @@ def test_info_return_not_empty():
 #    assert peticion.status_code == 200
 
 def test_cue_post():
-    files = {'file': open('tests/Three Samples_ASCII.cue', 'rb')}
+    files = {'file': open('proyectocc-backend/tests/Three Samples_ASCII.cue', 'rb')}
     peticion = requests.post(CUE_URL, files=files)
     assert peticion.status_code == 200
 
 def test_audio_post():
-    files = {'file': open('tests/Three Samples.flac', 'rb')}
+    files = {'file': open('proyectocc-backend/tests/Three Samples.flac', 'rb')}
     #peticion = requests.post(AUDIO_URL+"?name=Three_Samples_ASCII.cue", files=files)
     peticion = requests.post(AUDIO_URL+"?name=Three_Samples_ASCII.cue", files=files)
     assert peticion.status_code == 200
