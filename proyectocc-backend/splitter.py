@@ -18,69 +18,110 @@ def crear_tabla(conexion, el_cursor):
     conexion.commit()
 
 def album_info(aCueSheet):
-    conexion = psycopg2.connect(
-        dbname="music_chops",
-        user="postgres",
-        password="1234",
-        #host="localhost"
-        host="my-postgres-database"
-    )
-    el_cursor = conexion.cursor()
-    crear_tabla(conexion, el_cursor)
-    respuesta = {}
-    getdata = FFCueSplitter(filename=aCueSheet, dry=True)
-    do_not_repeat = False
-    el_cursor.execute("SELECT discid FROM public.chopped_musical WHERE discid = %s",(getdata.cue.meta.data['DISCID'],))
-    do_not_repeat = el_cursor.fetchone() is None
-    print("----------------------------------------------")
-    if 'DISCID' in getdata.cue.meta.data:
-        print("DISCID: "+getdata.cue.meta.data['DISCID'])
-        respuesta['DISCID'] = getdata.cue.meta.data['DISCID']
-        if do_not_repeat:
-            el_cursor.execute("INSERT INTO public.chopped_musical (discid, title, performer, date, genre) VALUES (%s,%s,%s,%s,%s)", (respuesta['DISCID'], 'XXYYYYZZ', 'XXYYYYZZ', '1999', 'XXYYYYZZ'))
+    try:
+        conexion = psycopg2.connect(
+            dbname="music_chops",
+            user="postgres",
+            password="1234",
+            #host="localhost"
+            host="my-postgres-database"
+        )
+        el_cursor = conexion.cursor()
+        crear_tabla(conexion, el_cursor)
+        respuesta = {}
+        getdata = FFCueSplitter(filename=aCueSheet, dry=True)
+        do_not_repeat = False
+        el_cursor.execute("SELECT discid FROM public.chopped_musical WHERE discid = %s",(getdata.cue.meta.data['DISCID'],))
+        do_not_repeat = el_cursor.fetchone() is None
+        print("----------------------------------------------")
+        if 'DISCID' in getdata.cue.meta.data:
+            print("DISCID: "+getdata.cue.meta.data['DISCID'])
+            respuesta['DISCID'] = getdata.cue.meta.data['DISCID']
+            if do_not_repeat:
+                el_cursor.execute("INSERT INTO public.chopped_musical (discid, title, performer, date, genre) VALUES (%s,%s,%s,%s,%s)", (respuesta['DISCID'], 'XXYYYYZZ', 'XXYYYYZZ', '1999', 'XXYYYYZZ'))
 
-    if 'ALBUM' in getdata.cue.meta.data:
-        print("Album: "+getdata.cue.meta.data['ALBUM'])
-        respuesta['Album'] = getdata.cue.meta.data['ALBUM']
-        if do_not_repeat:
-            el_cursor.execute("UPDATE public.chopped_musical SET title = %s WHERE discid = %s",(respuesta['Album'],respuesta['DISCID']))
+        if 'ALBUM' in getdata.cue.meta.data:
+            print("Album: "+getdata.cue.meta.data['ALBUM'])
+            respuesta['Album'] = getdata.cue.meta.data['ALBUM']
+            if do_not_repeat:
+                el_cursor.execute("UPDATE public.chopped_musical SET title = %s WHERE discid = %s",(respuesta['Album'],respuesta['DISCID']))
 
-    if 'PERFORMER' in getdata.cue.meta.data:
-        print("Intérpretes: "+getdata.cue.meta.data['PERFORMER'])
-        respuesta['Interpretes'] = getdata.cue.meta.data['PERFORMER']
-        if do_not_repeat:
-            el_cursor.execute("UPDATE public.chopped_musical SET performer = %s WHERE discid = %s",(respuesta['Interpretes'],respuesta['DISCID']))
+        if 'PERFORMER' in getdata.cue.meta.data:
+            print("Intérpretes: "+getdata.cue.meta.data['PERFORMER'])
+            respuesta['Interpretes'] = getdata.cue.meta.data['PERFORMER']
+            if do_not_repeat:
+                el_cursor.execute("UPDATE public.chopped_musical SET performer = %s WHERE discid = %s",(respuesta['Interpretes'],respuesta['DISCID']))
 
-    if 'DATE' in getdata.cue.meta.data:
-        print("Año: "+getdata.cue.meta.data['DATE'])
-        respuesta['Fecha'] = getdata.cue.meta.data['DATE']
-        if do_not_repeat:
-            el_cursor.execute("UPDATE public.chopped_musical SET date = %s WHERE discid = %s",(respuesta['Fecha'],respuesta['DISCID']))
+        if 'DATE' in getdata.cue.meta.data:
+            print("Año: "+getdata.cue.meta.data['DATE'])
+            respuesta['Fecha'] = getdata.cue.meta.data['DATE']
+            if do_not_repeat:
+                el_cursor.execute("UPDATE public.chopped_musical SET date = %s WHERE discid = %s",(respuesta['Fecha'],respuesta['DISCID']))
 
-    if 'CATALOG' in getdata.cue.meta.data:
-        print("Nº Catálogo: "+getdata.cue.meta.data['CATALOG'])
-        respuesta['catalog'] = getdata.cue.meta.data['CATALOG']
+        if 'CATALOG' in getdata.cue.meta.data:
+            print("Nº Catálogo: "+getdata.cue.meta.data['CATALOG'])
+            respuesta['catalog'] = getdata.cue.meta.data['CATALOG']
 
-    if 'GENRE' in getdata.cue.meta.data:
-        print("Género: "+getdata.cue.meta.data['GENRE'])
-        respuesta['Genero'] = getdata.cue.meta.data['GENRE']
-        if do_not_repeat:
-            el_cursor.execute("UPDATE public.chopped_musical SET genre = %s WHERE discid = %s",(respuesta['Genero'],respuesta['DISCID']))
+        if 'GENRE' in getdata.cue.meta.data:
+            print("Género: "+getdata.cue.meta.data['GENRE'])
+            respuesta['Genero'] = getdata.cue.meta.data['GENRE']
+            if do_not_repeat:
+                el_cursor.execute("UPDATE public.chopped_musical SET genre = %s WHERE discid = %s",(respuesta['Genero'],respuesta['DISCID']))
+    
+        print("*****************PISTAS***********************")
+        indice = 0
+        tracks = []
+        for i in range(len(getdata.audiotracks)):
+            if 'TITLE' in getdata.audiotracks[i]:
+                print(getdata.audiotracks[i]['TITLE'])
+                tracks.append(getdata.audiotracks[i]['TITLE'])
+        print("----------------------------------------------")
+        respuesta['tracks'] = tracks
+        conexion.commit()
+        el_cursor.close()
+        conexion.close()
+        return respuesta
+    except psycopg2.OperationalError as e:
+        #PROCEDER SIN ESCRIBIR EN LA BASE DE DATOS
+        respuesta = {}
+        getdata = FFCueSplitter(filename=aCueSheet, dry=True)
+        print("----------------------------------------------")
+        if 'DISCID' in getdata.cue.meta.data:
+            print("DISCID: "+getdata.cue.meta.data['DISCID'])
+            respuesta['DISCID'] = getdata.cue.meta.data['DISCID']
+            
+        if 'ALBUM' in getdata.cue.meta.data:
+            print("Album: "+getdata.cue.meta.data['ALBUM'])
+            respuesta['Album'] = getdata.cue.meta.data['ALBUM']
+            
+        if 'PERFORMER' in getdata.cue.meta.data:
+            print("Intérpretes: "+getdata.cue.meta.data['PERFORMER'])
+            respuesta['Interpretes'] = getdata.cue.meta.data['PERFORMER']
+            
+        if 'DATE' in getdata.cue.meta.data:
+            print("Año: "+getdata.cue.meta.data['DATE'])
+            respuesta['Fecha'] = getdata.cue.meta.data['DATE']
+            
+        if 'CATALOG' in getdata.cue.meta.data:
+            print("Nº Catálogo: "+getdata.cue.meta.data['CATALOG'])
+            respuesta['catalog'] = getdata.cue.meta.data['CATALOG']
 
-
-    print("*****************PISTAS***********************")
-    indice = 0
-    tracks = []
-    for i in range(len(getdata.audiotracks)):
-        if 'TITLE' in getdata.audiotracks[i]:
-            print(getdata.audiotracks[i]['TITLE'])
-            tracks.append(getdata.audiotracks[i]['TITLE'])
-    print("----------------------------------------------")
-    respuesta['tracks'] = tracks
-    conexion.commit()
-    el_cursor.close()
-    conexion.close()
-    return respuesta
+        if 'GENRE' in getdata.cue.meta.data:
+            print("Género: "+getdata.cue.meta.data['GENRE'])
+            respuesta['Genero'] = getdata.cue.meta.data['GENRE']
+            
+        print("*****************PISTAS***********************")
+        indice = 0
+        tracks = []
+        for i in range(len(getdata.audiotracks)):
+            if 'TITLE' in getdata.audiotracks[i]:
+                print(getdata.audiotracks[i]['TITLE'])
+                tracks.append(getdata.audiotracks[i]['TITLE'])
+        print("----------------------------------------------")
+        respuesta['tracks'] = tracks
+        
+        return respuesta
+    
 
 #TODO: Se puede intentar que se puedan seleccionar más parámetros
 def split_it_like_solomon(cue):

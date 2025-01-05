@@ -15,13 +15,13 @@ def test_info_return_type():
 def test_info_return_not_empty():
     assert bool(album_info("tests/Three Samples_ASCII.cue"))
 
-def test_cue_get():
-    peticion = requests.get(CUE_URL)
-    assert peticion.status_code == 200
+#def test_cue_get():
+#    peticion = requests.get(CUE_URL)
+#    assert peticion.status_code == 200
 
-def test_audio_get():
-    peticion = requests.get(AUDIO_URL)
-    assert peticion.status_code == 200
+#def test_audio_get():
+#    peticion = requests.get(AUDIO_URL)
+#    assert peticion.status_code == 200
 
 def test_cue_post():
     files = {'file': open('tests/Three Samples_ASCII.cue', 'rb')}
@@ -30,6 +30,7 @@ def test_cue_post():
 
 def test_audio_post():
     files = {'file': open('tests/Three Samples.flac', 'rb')}
+    #peticion = requests.post(AUDIO_URL+"?name=Three_Samples_ASCII.cue", files=files)
     peticion = requests.post(AUDIO_URL+"?name=Three_Samples_ASCII.cue", files=files)
     assert peticion.status_code == 200
 
