@@ -29,7 +29,7 @@ jobs:
             
             - name: Start API and run tests
               run: |
-                flask --app api run --host='0.0.0.0' &
+                flask --app proyectocc-backend/api run --host='0.0.0.0' &
                 sleep 2
-                pytest test_basics.py
+                pytest proyectocc-backend/test_basics.py
                 kill -9 `lsof -i:5000 -t`
