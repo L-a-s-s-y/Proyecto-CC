@@ -40,10 +40,7 @@
       async fetchInfo() {
         console.log(`${backend}/info/${this.cueName}`)
         try {
-          //const res = await axios.get(`http://localhost:5000/info/${this.cueName}`);
-          //const res = await axios.get(`${process.env.VUE_APP_API_MACHINE}/info/${this.cueName}`);
           const res = await axios.get(`${backend}/info/${this.cueName}`);
-          //const res = await axios.get(`http://172.18.0.2:5000/info/${this.cueName}`);
           this.response = res.data;
         } catch (err) {
           console.error(err);
@@ -51,46 +48,40 @@
         }
       },
       async getFiles() {
-        console.log(`${backend}/download/${this.cueName}`)
-        try {
-            // Realizar la solicitud a la API
-            //const response = await axios.get(`http://localhost:5000/download/${this.cueName}`, {
-            //const response = await axios.get(`http://172.18.0.2:5000/download/${this.cueName}`, {
-            //const response = await axios.get(`${process.env.VUE_APP_API_MACHINE}/download/${this.cueName}`, {
+          try {
             const response = await axios.get(`${backend}/download/${this.cueName}`, {
-            responseType: "blob", // Asegura que el archivo se reciba como blob
-            });
+              responseType: "blob", // Asegura que el archivo se reciba como blob
+              });
 
             // Obtener el nombre del archivo del encabezado Content-Disposition
-            // Obtener el nombre del archivo del encabezado Content-Disposition
-        const contentDisposition = response.headers["content-disposition"];
-        let fileName = "downloaded_file"; // Valor por defecto
+            const contentDisposition = response.headers["content-disposition"];
+            let fileName = "downloaded_file"; // Valor por defecto
 
-        if (contentDisposition) {
-          const matches = contentDisposition.match(/filename="?([^"]+)"?/);
-          if (matches && matches[1]) {
-            fileName = matches[1];
-          }
+            if (contentDisposition) {
+              const matches = contentDisposition.match(/filename="?([^"]+)"?/);
+              if (matches && matches[1]) {
+                fileName = matches[1];
+              }
+            }
+
+            // Crear una URL para el archivo descargado
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement("a");
+            link.href = url;
+
+            // Establecer el nombre del archivo para la descarga
+            link.setAttribute("download", fileName);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            this.message = `File "${fileName}" downloaded successfully!`;
+        } catch (error) {
+          console.error("Error downloading the file:", error);
+          this.message =
+            "There was an error downloading the file. Please try again later.";
         }
-
-        // Crear una URL para el archivo descargado
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement("a");
-        link.href = url;
-
-        // Establecer el nombre del archivo para la descarga
-        link.setAttribute("download", fileName);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-
-        this.message = `File "${fileName}" downloaded successfully!`;
-      } catch (error) {
-        console.error("Error downloading the file:", error);
-        this.message =
-          "There was an error downloading the file. Please try again later.";
-      }
-        },
+      },
     },
   };
   </script>

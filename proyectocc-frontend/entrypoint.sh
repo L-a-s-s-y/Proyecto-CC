@@ -9,7 +9,6 @@ do
   echo "Processing $file ...";
 
   sed -i 's|VUE_APP_API_MACHINE|'${VUE_APP_API_MACHINE}'|g' $file 
-  #sed -i 's|VUE_APP_CLIENT_ID|'${VUE_APP_CLIENT_ID}'|g' $file
 
 done
 

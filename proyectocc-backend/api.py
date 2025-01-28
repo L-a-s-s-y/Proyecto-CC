@@ -1,7 +1,6 @@
 import logging.handlers
 import os
 from flask import Flask, request, redirect, url_for, send_from_directory
-from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from ffcuesplitter.cuesplitter import InvalidFileError
 from ffcuesplitter.cuesplitter import FFCueSplitterError
@@ -16,35 +15,16 @@ ALLOWED_EXTENSIONS = {'flac', 'ape', 'mp3', 'wav'}
 ALLOWED_CUE = {'cue'}
 
 app = Flask(__name__)
-#CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.wsgi_app = ProxyFix(
     app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
 )
 
 el_logger = logging.getLogger()
-
-#el_logger_formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s", datefmt="%d-%m-%Y | %H:%:%S")
-
 consoleHandler = logging.StreamHandler()
-#consoleHandler.setFormatter(el_logger_formatter)
 el_logger.addHandler(consoleHandler)
-
 fileHandler = logging.handlers.RotatingFileHandler("logs.log", backupCount=100, maxBytes=1048576, encoding='utf-8')
-#fileHandler.setFormatter(el_logger_formatter)
 el_logger.addHandler(fileHandler)
-
-#@app.after_request
-#def after_request(response):
-#    response.headers.add('Access-Control-Allow-Origin', '*')  # Permite todas las solicitudes de origen
-#    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')  # Cabeceras permitidas
-#    response.headers.add('Access-Control-Allow-Methods', 'GET,POST')  # Métodos permitidos
-#    return response
-#
-#@app.before_request
-#def log_request_info():
-#    el_logger.debug(f"Request Headers: {request.headers}")
-#    el_logger.debug(f"Request Body: {request.get_data()}")
 
 def allowed_audio(filename):
     return '.' in filename and \
@@ -70,10 +50,6 @@ def mod_cue_target_file(cue_sheet):
         print("CUE ajustado")      
         print("--------------------------------------")
 
-
-
-
-#@app.route('/', methods=['GET', 'POST'])
 #TODO: para el hash seguramente haya que hacerlo del archivo completo :(
 @app.route('/cue', methods=['POST'])
 def upload_cue():
@@ -93,10 +69,8 @@ def upload_cue():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             mod_cue_target_file(filename)
             response = {}
-            
             response['filename'] = filename
             return response
-            #return redirect(url_for('wellcome_audio', name=filename))
         else:
             error = {}
             error['error'] = "not a .cue file"
@@ -110,7 +84,6 @@ def upload_audio():
             #flash('No file part')
             return redirect(request.url)
         file = request.files['file']
-        #cue = request.args['name'] #para tomar el nombre del cue origen
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
         if file.filename == '':
@@ -133,7 +106,6 @@ def download_file(name):
     try:
         comprimido = splitter.split_it_like_solomon(os.path.join(app.config['UPLOAD_FOLDER'], name))
         respuesta = send_from_directory(app.config['UPLOAD_FOLDER'], comprimido.split('/')[2])
-        #respuesta.headers['Access-Control-Allow-Origin'] = '*'
         respuesta.headers['Access-Control-Expose-Headers'] = 'Content-Disposition'
         return respuesta
         #return send_from_directory(app.config['UPLOAD_FOLDER'], comprimido.split('/')[2], as_attachment=True)
