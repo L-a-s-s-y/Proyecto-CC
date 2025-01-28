@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 Ordenes*
-
+Configuracion*
 # Directorios y archivos del proyecto
 CUEs/
 db_pruebas.py
