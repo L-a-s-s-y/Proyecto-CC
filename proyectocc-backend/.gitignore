@@ -10,6 +10,7 @@ ffcuesplitter_rest_api.egg-info
 # *.flac
 # *.ape
 # *.mp3
+nginx.conf
 
 # C extensions
 *.so

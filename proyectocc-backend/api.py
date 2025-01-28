@@ -5,16 +5,22 @@ from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from ffcuesplitter.cuesplitter import InvalidFileError
 from ffcuesplitter.cuesplitter import FFCueSplitterError
+from werkzeug.middleware.proxy_fix import ProxyFix
 import logging
 import splitter
+
+#flask --app api run --host='0.0.0.0'
 
 UPLOAD_FOLDER = '/tmp'
 ALLOWED_EXTENSIONS = {'flac', 'ape', 'mp3', 'wav'}
 ALLOWED_CUE = {'cue'}
 
 app = Flask(__name__)
-CORS(app)
+#CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.wsgi_app = ProxyFix(
+    app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
+)
 
 el_logger = logging.getLogger()
 
@@ -27,6 +33,18 @@ el_logger.addHandler(consoleHandler)
 fileHandler = logging.handlers.RotatingFileHandler("logs.log", backupCount=100, maxBytes=1048576, encoding='utf-8')
 #fileHandler.setFormatter(el_logger_formatter)
 el_logger.addHandler(fileHandler)
+
+#@app.after_request
+#def after_request(response):
+#    response.headers.add('Access-Control-Allow-Origin', '*')  # Permite todas las solicitudes de origen
+#    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')  # Cabeceras permitidas
+#    response.headers.add('Access-Control-Allow-Methods', 'GET,POST')  # Métodos permitidos
+#    return response
+#
+#@app.before_request
+#def log_request_info():
+#    el_logger.debug(f"Request Headers: {request.headers}")
+#    el_logger.debug(f"Request Body: {request.get_data()}")
 
 def allowed_audio(filename):
     return '.' in filename and \
@@ -75,6 +93,7 @@ def upload_cue():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             mod_cue_target_file(filename)
             response = {}
+            
             response['filename'] = filename
             return response
             #return redirect(url_for('wellcome_audio', name=filename))

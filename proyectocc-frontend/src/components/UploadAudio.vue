@@ -15,6 +15,7 @@
   
   <script>
   import axios from 'axios';
+  import { backend } from '@/app.config';
   
   export default {
     data() {
@@ -34,9 +35,12 @@
       async uploadAudio() {
         const formData = new FormData();
         formData.append('file', this.file);
+
+        console.log(`${backend}/audio`)
   
         try {
-            const res = await axios.post(`${process.env.VUE_APP_API_MACHINE}/audio`, formData, {
+            //const res = await axios.post(`${process.env.VUE_APP_API_MACHINE}/audio`, formData, {
+            const res = await axios.post(`${backend}/audio`, formData, {
             //const res = await axios.post(`http://172.18.0.2:5000/audio`, formData, {
             //const res = await axios.post(`http://localhost:5000/audio`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },

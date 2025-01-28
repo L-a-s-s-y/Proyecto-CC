@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+Ordenes*
 
 # Directorios y archivos del proyecto
 CUEs/

@@ -1,6 +1,15 @@
 version: '3.8'
 
 services:
+  proxy:
+    image: proyecto-cc/proxy
+    container_name: proxy
+    ports:
+      - "80:80"
+    networks:
+      - app_nat
+    restart: always
+    
   backend:
     image: proyecto-cc/backend-v1
     container_name: backend
@@ -17,6 +26,8 @@ services:
       - "8080:80"
     networks:
       - app_nat
+    environment:
+      - VUE_APP_API_MACHINE=http://192.168.178.29:80
     restart: always
 
   database:
