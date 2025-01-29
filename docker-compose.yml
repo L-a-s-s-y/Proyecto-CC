@@ -20,7 +20,7 @@ services:
     restart: always
 
   frontend:
-    image: proyecto-cc/frontend-v1
+    image: proyecto-cc/frontend-v2
     container_name: frontend
     ports:
       - "8080:80"

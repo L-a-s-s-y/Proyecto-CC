@@ -28,18 +28,23 @@
         this.file = event.target.files[0];
       },
       async uploadCue() {
-        const formData = new FormData();
-        formData.append('file', this.file);
-  
-        try {
-          const res = await axios.post(`${backend}/cue`, formData, {
-            headers: { 'Content-Type': 'multipart/form-data',},
-          });
-          this.response = res.data;
-          this.$router.push(`/upload-audio/${this.response['filename']}`);
-        } catch (err) {
-          console.log(err);
-          this.response = { error: 'Error uploading .cue file' };
+        if (this.file.type == "application/x-cue"){
+          const formData = new FormData();
+          formData.append('file', this.file);
+          
+          try {
+            const res = await axios.post(`${backend}/cue`, formData, {
+              headers: { 'Content-Type': 'multipart/form-data',},
+            });
+            this.response = res.data;
+            this.$router.push(`/upload-audio/${this.response['filename']}`);
+          } catch (err) {
+            console.log(err);
+            this.response = { error: 'Error uploading .cue file' };
+          }
+        } else {
+          alert("The file must be a .cue file!")
+          this.$router.push(`/upload-cue`);
         }
       },
     },

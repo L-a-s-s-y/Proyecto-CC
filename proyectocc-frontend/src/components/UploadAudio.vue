@@ -32,20 +32,25 @@
         this.file = event.target.files[0];
       },
       async uploadAudio() {
-        const formData = new FormData();
-        formData.append('file', this.file);
-  
-        try {
-          const res = await axios.post(`${backend}/audio`, formData, {
-              headers: { 'Content-Type': 'multipart/form-data' },
-          });
-          this.response = res.data;
-          this.$router.push(`/info-cue/${this.cueName}`);
-          console.log(this.response['filename'])
-          console.log(this.response)
-        } catch (err) {
-          console.error(err);
-          this.response = { error: 'Error uploading audio file' };
+        if (this.file.type.substring(0,5)=="audio"){
+          const formData = new FormData();
+          formData.append('file', this.file);
+    
+          try {
+            const res = await axios.post(`${backend}/audio`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+            this.response = res.data;
+            this.$router.push(`/info-cue/${this.cueName}`);
+            console.log(this.response['filename'])
+            console.log(this.response)
+          } catch (err) {
+            console.error(err);
+            this.response = { error: 'Error uploading audio file' };
+          }
+        } else {
+          alert("The file must be an audio file!")
+          this.$router.push(`/upload-audio/${this.cueName}`);
         }
       },
     },
